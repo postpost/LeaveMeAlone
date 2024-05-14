@@ -8,6 +8,8 @@
 #include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Engine/Engine.h"
+
 
 
 // Sets default values
@@ -33,6 +35,10 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+
+	//Jump functions improvements
+	//GetCharacterMovement()
+
 }
 
 // Called when the game starts or when spawned
@@ -72,7 +78,10 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
-
+	
+	PlayerInputComponent->BindAxis("CameraZoom", this, &ALMADefaultCharacter::CameraZoom);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ALMADefaultCharacter::OnStartJump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ALMADefaultCharacter::OnStopJump);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value) 
@@ -83,5 +92,22 @@ void ALMADefaultCharacter::MoveForward(float Value)
 void ALMADefaultCharacter::MoveRight(float Value) 
 {
 	AddMovementInput(GetActorRightVector(), Value);
+}
+
+void ALMADefaultCharacter::CameraZoom(float Value)
+{
+	float ZoomFactor = Value * ZoomMultiplier;
+	SpringArmComponent->TargetArmLength += ZoomFactor;
+	FMath::Clamp(SpringArmComponent->TargetArmLength, 100, 1400);
+}
+
+void ALMADefaultCharacter::OnStartJump() 
+{
+	bPressedJump = true;
+}
+
+void ALMADefaultCharacter::OnStopJump() 
+{
+	bPressedJump = false;
 }
 

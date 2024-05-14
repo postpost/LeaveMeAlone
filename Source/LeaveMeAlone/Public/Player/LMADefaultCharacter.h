@@ -45,14 +45,21 @@ protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Cursor")
 	FVector CursorSize = FVector(20.f, 40.f, 40.0f);
 
+	UPROPERTY(EditAnywhere)
+	float ZoomMultiplier = 10.0f;
+
 private:
 	float YRotation = -75.0f; //поворот камеры по оси Y
 	float ArmLength = 1400.0f; // длина штатива
 	float FOV = 55.0f; //поле зрения камеры
 
+	
+
 	//Inputs
 	void MoveForward(float Value); // axesX
 	void MoveRight(float Value); //axesY
 
-
+	void CameraZoom(float Value);
+	void OnStartJump();
+	void OnStopJump();
 };
