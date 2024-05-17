@@ -8,7 +8,7 @@
 #include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Engine/Engine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 
@@ -37,7 +37,8 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	bUseControllerRotationYaw = false;
 
 	//Jump functions improvements
-	//GetCharacterMovement()
+	GetCharacterMovement()->GravityScale = 1.5f;
+	GetCharacterMovement()->JumpZVelocity = 650;
 
 }
 
@@ -98,7 +99,7 @@ void ALMADefaultCharacter::CameraZoom(float Value)
 {
 	float ZoomFactor = Value * ZoomMultiplier;
 	SpringArmComponent->TargetArmLength += ZoomFactor;
-	FMath::Clamp(SpringArmComponent->TargetArmLength, 100, 1400);
+	SpringArmComponent->TargetArmLength = FMath::Clamp(SpringArmComponent->TargetArmLength, 150, 1400);
 }
 
 void ALMADefaultCharacter::OnStartJump() 
