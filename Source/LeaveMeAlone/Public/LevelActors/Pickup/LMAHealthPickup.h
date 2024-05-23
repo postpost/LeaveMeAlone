@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Player/LMADefaultCharacter.h"
 #include "LMAHealthPickup.generated.h"
 
-//class USphereComponent;
+class USphereComponent;
 
 UCLASS()
 class LEAVEMEALONE_API ALMAHealthPickup : public AActor
@@ -32,7 +33,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup")
 	float RespawnTime = 5.0f; // время респавна актора
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup", meta = (ClampMin="5.0f", ClampMax="100.0f"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup", meta = (ClampMin = 5.0f, ClampMax = 100.0f))
 	float HealthFromPickup = 100.0f; //пополнение здоровья
 
 	//TEST ONLY
@@ -42,8 +43,7 @@ protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override; //переопределение функции базового класса Актора, срабатывает при коллизии
 
 private:
-	bool GivePickup(ALMADefaultCharacter* Character); //был ли подобран пикап
+	bool GivePickup (ALMADefaultCharacter* Character); //был ли подобран пикап
 	void PickupWasTaken(); //таймер респавна, будет скрывать пикап на опр-ное время после взятия пикапа (по имени не понятно, что это таймер)
 	void RespawnPickup(); //возвращает видимость пикапа через опр-ное кол-во времени
-
 };

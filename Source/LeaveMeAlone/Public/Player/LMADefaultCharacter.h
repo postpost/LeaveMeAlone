@@ -12,7 +12,6 @@ class ULMAHealthComponent;
 class UAnimMontage;
 
 
-
 UCLASS()
 class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
 {
@@ -21,6 +20,9 @@ class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ALMADefaultCharacter();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsSprinting = false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,7 +37,7 @@ public:
 
 	//to get Health Component
 	UFUNCTION()
-	ULMAHealthComponent* GetHealthComponent() const { return HealthComponent; }
+	ULMAHealthComponent* GetHealthComponent() const { return HealthComponent;}
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -64,11 +66,28 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* DeathMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Sprint Settings")
+	float SprintSpeed = 2000;
+		
+	UPROPERTY(EditAnywhere, Category = "Sprint Settings")
+	float SprintAcceleration = 4000;
+
+	UPROPERTY(EditAnywhere, Category = "Sprint Settings")
+	float MaxStamina = 100;
+
+	
+	UPROPERTY(EditAnywhere, Category = "Sprint Settings")
+	float StaminaDamage = 5.0f;
 
 private:
 	float YRotation = -75.0f; //поворот камеры по оси Y
 	float ArmLength = 1400.0f; // длина штатива
 	float FOV = 55.0f; //поле зрения камеры
+
+	float InitialSpeed;
+	float InitialAcceleration;
+
+	float Stamina = 0.0f;
 
 	//Inputs
 	void MoveForward(float Value); // axesX
@@ -77,6 +96,18 @@ private:
 	void CameraZoom(float Value);
 	void OnStartJump();
 	void OnStopJump();
+	
+	// Sprint
+	void StartSprint();
+	void StopSprint();
+
+	//Stamina
+	void DecreaseStamina();
+	void RestoreStamina();
+
+	//Timer to restore Stamina
+	FTimerHandle StaminaRestoreTimerHandle;
+	FTimerHandle StaminaDecreaseTimerHandle;
 
 	//reaction on Death Delegate (in HealthComponent)
 	void OnDeath();
@@ -86,4 +117,5 @@ private:
 
 	//func for Damage Delegate
 	void OnHealthChanged(float NewHealth);
+
 };

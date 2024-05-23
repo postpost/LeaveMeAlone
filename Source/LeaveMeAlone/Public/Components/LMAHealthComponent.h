@@ -29,8 +29,8 @@ public:
 	bool IsDead() const;
 
 	//Pickup system
-	bool AddHealth(float NewHealth); //добвляет здоровье, и возвращает true, если прибавлено
-	bool IsHealthFull() const; //проверка на заполенность здоровья
+	bool AddHealth(float NewHealth); //добавляет здоровье, и возвращает true, если прибавлено
+	bool IsHealthFull() const; //проверка на заполненность здоровья
 
 protected:
 	// Called when the game starts

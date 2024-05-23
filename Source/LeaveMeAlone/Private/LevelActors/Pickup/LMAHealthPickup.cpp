@@ -30,7 +30,33 @@ void ALMAHealthPickup::Tick(float DeltaTime)
 
 }
 
-void ALMAHealthPickup::NotifyActorBeginOverlap(AActor* OtherActor) 
+
+void ALMAHealthPickup::PickupWasTaken()
+{
+	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GetRootComponent()->SetVisibility(false, true); // скрывает пикап
+
+	FTimerHandle RespawnTimerHandle; // запускает таймер
+	GetWorldTimerManager().SetTimer(
+		RespawnTimerHandle, this, &ALMAHealthPickup::RespawnPickup, RespawnTime); // через время RespawnTime вызвать функцию RespawnPickup()
+}
+
+void ALMAHealthPickup::RespawnPickup()
+{
+	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	GetRootComponent()->SetVisibility(true, true); // снова показывает пикап
+}
+
+
+bool ALMAHealthPickup::GivePickup(ALMADefaultCharacter* Character)
+{
+	const auto HealthComponent = Character->GetHealthComponent();
+	if (!HealthComponent) return false;
+	return HealthComponent->AddHealth(HealthFromPickup);
+	
+}
+
+void ALMAHealthPickup::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 	const auto Character = Cast<ALMADefaultCharacter>(OtherActor);
@@ -40,26 +66,4 @@ void ALMAHealthPickup::NotifyActorBeginOverlap(AActor* OtherActor)
 	}
 }
 
-bool ALMAHealthPickup::GivePickup(ALMADefaultCharacter* Character)
-{
-	const auto HealthComponent = Character->GetHealthComponent();
-	if (!HealthComponent)
-		return false;
-	return HealthComponent->AddHealth(HealthFromPickup);
-	
-}
-
-void ALMAHealthPickup::PickupWasTaken()
-{
-	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	GetRootComponent()->SetVisibility(false, true); //скрывает пикап
-	FTimerHandle RespawnTimerHandle; //запускает таймер
-	GetWorldTimerManager().SetTimer(RespawnTimerHandle, this, &ALMAHealthPickup::RespawnPickup, RespawnTime); //через время RespawnTime вызвать функцию RespawnPickup()
-}
-
-void ALMAHealthPickup::RespawnPickup() 
-{
-	SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	GetRootComponent()->SetVisibility(true, true); //снова показыват пикап
-}
 
