@@ -64,6 +64,7 @@ void ALMADefaultCharacter::BeginPlay()
 	//Подписка на делегат FOnDeath из HealthComponent
 	HealthComponent->OnDeath.AddUObject(this, &ALMADefaultCharacter::OnDeath);
 
+	Stamina = MaxStamina;
 }
 
 // Called every frame
@@ -163,31 +164,43 @@ void ALMADefaultCharacter::OnHealthChanged(float NewHealth)
 void ALMADefaultCharacter::StartSprint()
 {
 	IsSprinting = true;
-	InitialSpeed = GetCharacterMovement()->MaxWalkSpeed;
-	InitialAcceleration = GetCharacterMovement()->MaxAcceleration;
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	GetCharacterMovement()->MaxAcceleration = SprintAcceleration;
-	//Timer to decrease Stamina
-	GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseTimerHandle, this, &ALMADefaultCharacter::DecreaseStamina, 0.5f, true);
+	if (IsSprinting && IsMoving() && !IsStaminaRestored)
+	{
+		InitialSpeed = GetCharacterMovement()->MaxWalkSpeed;
+		InitialAcceleration = GetCharacterMovement()->MaxAcceleration;
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+		GetCharacterMovement()->MaxAcceleration = SprintAcceleration;
+		// Timer to decrease Stamina
+		GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseTimerHandle, this, &ALMADefaultCharacter::DecreaseStamina, 0.5f, true);
+		IsStaminaRestored = true;
+	}
+
 }
 
 void ALMADefaultCharacter::StopSprint() 
 {
 	IsSprinting = false;
-	GetCharacterMovement()->MaxWalkSpeed = InitialSpeed;
-	GetCharacterMovement()->MaxAcceleration = InitialAcceleration;
-	
-	// Switch Stamina decrease off
-	GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseTimerHandle);
+	IsStaminaRestored = false;
+	if (!IsSprinting)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = InitialSpeed;
+		GetCharacterMovement()->MaxAcceleration = InitialAcceleration;
 
-	// Timer to restore Stamina
-	GetWorld()->GetTimerManager().SetTimer(StaminaRestoreTimerHandle, this, &ALMADefaultCharacter::RestoreStamina, 1.0f, false);
+		// Switch Stamina decrease off
+		GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseTimerHandle);
+
+		// Timer to restore Stamina
+		GetWorld()->GetTimerManager().SetTimer(StaminaRestoreTimerHandle, this, &ALMADefaultCharacter::RestoreStamina, 5.0f, false);
+	}
 }
 
 void ALMADefaultCharacter::DecreaseStamina()
 {
-	Stamina = FMath::Clamp(Stamina - StaminaDamage, 0.0f, MaxStamina);
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Magenta, FString::Printf(TEXT("Stamina = %f"), Stamina));
+	if (IsSprinting && IsMoving())
+	{
+		Stamina = FMath::Clamp(Stamina - StaminaDamage, 0.0f, MaxStamina);
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Magenta, FString::Printf(TEXT("Stamina = %f"), Stamina));
+	}
 	if (Stamina == 0 && IsSprinting == true)
 	{
 		StopSprint();
@@ -199,6 +212,9 @@ void ALMADefaultCharacter::RestoreStamina()
 	Stamina = MaxStamina;
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Stamina restored = %f"), Stamina));
 	GetWorld()->GetTimerManager().ClearTimer(StaminaRestoreTimerHandle);
-	
 }
 
+bool ALMADefaultCharacter::IsMoving()
+{
+	return GetCharacterMovement()->Velocity.Length() > 0;
+}

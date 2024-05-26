@@ -8,6 +8,7 @@
 #include "LMAHealthPickup.generated.h"
 
 class USphereComponent;
+class ALMADefaultCharacter;
 
 UCLASS()
 class LEAVEMEALONE_API ALMAHealthPickup : public AActor
