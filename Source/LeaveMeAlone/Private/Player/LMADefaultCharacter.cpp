@@ -10,7 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Weapon/LMAWeaponComponent.h"
 
 
 // Sets default values
@@ -44,6 +44,8 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	//Health Component
 	HealthComponent = CreateDefaultSubobject<ULMAHealthComponent>("HealthComponent");
 
+	//Weapon Component
+	WeaponComponent = CreateDefaultSubobject<ULMAWeaponComponent>("WeaponComponent");
 }
 
 // Called when the game starts or when spawned
@@ -61,6 +63,7 @@ void ALMADefaultCharacter::BeginPlay()
 
 	//Подписка на делегат FOnDeath из HealthComponent
 	HealthComponent->OnDeath.AddUObject(this, &ALMADefaultCharacter::OnDeath);
+
 }
 
 // Called every frame
@@ -69,7 +72,7 @@ void ALMADefaultCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!(HealthComponent->IsDead()))
 	{
-		RotationPlayerOnCursor();
+		RotationPlayerOnCursor(); //включать курсор только, когда персонаж НЕ_МЕРТВ
 	}
 }
 
@@ -87,6 +90,10 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ALMADefaultCharacter::StartSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ALMADefaultCharacter::StopSprint);
 	
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &ULMAWeaponComponent::Fire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, WeaponComponent, &ULMAWeaponComponent::StopFire);
+	
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &ULMAWeaponComponent::Reload);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value) 
@@ -172,6 +179,7 @@ void ALMADefaultCharacter::StopSprint()
 	
 	// Switch Stamina decrease off
 	GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseTimerHandle);
+
 	// Timer to restore Stamina
 	GetWorld()->GetTimerManager().SetTimer(StaminaRestoreTimerHandle, this, &ALMADefaultCharacter::RestoreStamina, 1.0f, false);
 }

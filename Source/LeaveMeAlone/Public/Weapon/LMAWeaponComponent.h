@@ -1,0 +1,58 @@
+// LeaveMeAlone game by MagicBit. All rights reserved.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
+#include "LMAWeaponComponent.generated.h"
+
+class ALMABaseWeapon;
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class LEAVEMEALONE_API ULMAWeaponComponent : public UActorComponent
+{
+	GENERATED_BODY()
+
+public:	
+	// Sets default values for this component's properties
+	ULMAWeaponComponent();
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	void SpawnWeapon();
+
+	void Fire();
+	void StopFire();
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<ALMABaseWeapon> WeaponClass;
+
+	UPROPERTY()
+	ALMABaseWeapon* Weapon = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UAnimMontage* ReloadMontage; // анимационный монтаж
+
+	bool AnimReloading = false;  //флаг, который будет выставляться при старте перезарядки
+
+	void Reload(); //функция перезарядки
+	void CheckReload();
+	void InitAnimNotify(); //функция инициалиализации уведомления
+	void OnNotifyReloadFinished(USkeletalMeshComponent* SkeletalMesh); //функция-коллбек на события оповещения от делегата
+	bool CanReload() const; // условия для перезарядки
+
+	//callback func for delegate FOnEmptyClipSignature
+	void OnEmptyClip();
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
+	FName SocketName = "r_Weapon_Socket";
+
+};

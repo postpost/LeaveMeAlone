@@ -11,6 +11,7 @@ class USpringArmComponent;
 class ULMAHealthComponent;
 class UAnimMontage;
 
+class ULMAWeaponComponent;
 
 UCLASS()
 class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
@@ -38,6 +39,10 @@ public:
 	//to get Health Component
 	UFUNCTION()
 	ULMAHealthComponent* GetHealthComponent() const { return HealthComponent;}
+
+	//Weapon Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
+	ULMAWeaponComponent* WeaponComponent;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
