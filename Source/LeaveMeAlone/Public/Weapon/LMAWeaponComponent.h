@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/LMABaseWeapon.h"
 #include "LMAWeaponComponent.generated.h"
 
 class ALMABaseWeapon;
+ 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LEAVEMEALONE_API ULMAWeaponComponent : public UActorComponent
@@ -50,6 +52,10 @@ public:
 
 	//callback func for delegate FOnEmptyClipSignature
 	void OnEmptyClip();
+
+	//For UI->BulletText Binding
+	UFUNCTION(BlueprintCallable)
+	bool GetCurrentWeaponRef(FAmmoWeapon& AmmoWeapon) const;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")

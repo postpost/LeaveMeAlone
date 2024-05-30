@@ -106,6 +106,16 @@ void ULMAWeaponComponent::OnEmptyClip()
 	CheckReload();
 }
 
+bool ULMAWeaponComponent::GetCurrentWeaponRef(FAmmoWeapon& AmmoWeapon) const
+{
+	if (Weapon)
+	{
+		AmmoWeapon = Weapon->GetCurrentAmmoWeapon(); //ссылка на структуру оружия
+		return true;
+	}
+	return false;
+}
+
 void ULMAWeaponComponent::Reload() 
 {
 	CheckReload();

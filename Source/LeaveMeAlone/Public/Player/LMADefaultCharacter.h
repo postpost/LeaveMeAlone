@@ -44,9 +44,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	ULMAWeaponComponent* WeaponComponent;
 
-	//check to SprintEnable
 	UFUNCTION(BlueprintCallable)
-	bool IsMoving(); // check for Sprint
+	float GetStamina() { return Stamina; };
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -94,10 +93,9 @@ private:
 
 	float InitialSpeed;
 	float InitialAcceleration;
-
+	
+	bool IsStaminaRestored = true;
 	float Stamina = 0.0f;
-
-	bool IsStaminaRestored = false;
 
 	//Inputs
 	void MoveForward(float Value); // axesX
@@ -114,8 +112,6 @@ private:
 	//Stamina
 	void DecreaseStamina();
 	void RestoreStamina();
-
-	
 
 	//Timer to restore Stamina
 	FTimerHandle StaminaRestoreTimerHandle;

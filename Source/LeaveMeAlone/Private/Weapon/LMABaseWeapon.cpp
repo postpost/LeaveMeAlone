@@ -3,6 +3,7 @@
 
 #include "Weapon/LMABaseWeapon.h"
 #include "Engine/SkeletalMesh.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // собственная категория логирования
@@ -47,7 +48,7 @@ void ALMABaseWeapon::DecrementBullets()
 {
 	if (!IsCurrentClipEmpty())
 		CurrentAmmoWeapon.Bullets--;
-	UE_LOG(LogWeapon, Display, TEXT("Bullets = %s"), *FString::FromInt(CurrentAmmoWeapon.Bullets));
+	//UE_LOG(LogWeapon, Display, TEXT("Bullets = %s"), *FString::FromInt(CurrentAmmoWeapon.Bullets));
 	if (IsCurrentClipEmpty())
 	{
 		//StopShooting(); TO_DO?

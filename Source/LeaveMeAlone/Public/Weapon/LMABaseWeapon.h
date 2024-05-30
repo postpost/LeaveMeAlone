@@ -58,6 +58,9 @@ public:
 
 	int GetCurrentBulletNum() const { return CurrentAmmoWeapon.Bullets; }
 	
+	//Get USTRUCT for UI(Text_Binding)
+	FAmmoWeapon GetCurrentAmmoWeapon() const { return CurrentAmmoWeapon; }
+
 	UFUNCTION(BlueprintCallable)
 	bool IsCurrentClipFull() const;
 
