@@ -209,16 +209,18 @@ void ALMADefaultCharacter::DecreaseStamina()
 void ALMADefaultCharacter::RestoreStamina()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (Stamina == 0 || !PC->IsInputKeyDown(EKeys::LeftShift))
-	{
-		Stamina = MaxStamina;
-		IsStaminaRestored = true;
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Stamina restored = %f"), Stamina));
-		GetWorld()->GetTimerManager().ClearTimer(StaminaRestoreTimerHandle);
-	}
 	if (PC)
 	{
+		if (Stamina == 0 || !PC->IsInputKeyDown(EKeys::LeftShift))
+		{
+			Stamina = MaxStamina;
+			IsStaminaRestored = true;
+			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, FString::Printf(TEXT("Stamina restored = %f"), Stamina));
+			GetWorld()->GetTimerManager().ClearTimer(StaminaRestoreTimerHandle);
+		}
+
 		if (PC->IsInputKeyDown(EKeys::LeftShift))
 			StartSprint();
 	}
+
 }
