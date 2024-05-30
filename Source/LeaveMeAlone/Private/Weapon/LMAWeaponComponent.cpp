@@ -29,15 +29,6 @@ void ULMAWeaponComponent::BeginPlay()
 	InitAnimNotify();
 }
 
-
-// Called every frame
-void ULMAWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void ULMAWeaponComponent::SpawnWeapon() 
 {
 	Weapon = GetWorld()->SpawnActor<ALMABaseWeapon>(WeaponClass);
@@ -62,7 +53,10 @@ void ULMAWeaponComponent::SpawnWeapon()
 void ULMAWeaponComponent::Fire() 
 {
 	if (Weapon && !AnimReloading)
+	{
 		Weapon->Fire(); //вызывает ф-цию в ALMABaseWeapon
+		IsFiring = true;
+	}
 }
 
 void ULMAWeaponComponent::StopFire()
@@ -125,15 +119,17 @@ void ULMAWeaponComponent::CheckReload()
 {
 	if (!CanReload())
 		return;
-	// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, FString::Printf(TEXT("FullClip = %d"), Weapon->IsCurrentClipFull()));
+	AnimReloading = true;
 	if (!Weapon->IsCurrentClipFull())
 	{
-		Weapon->ChangeClip();
-		// GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, FString::Printf(TEXT("Bullets after Reloading = %i"),
-		// Weapon->GetCurrentBulletNum()));
-		AnimReloading = true;
-
+		if (IsFiring)
+		{
+			StopFire();
+		}
+		
 		ACharacter* Character = Cast<ACharacter>(GetOwner());
 		Character->PlayAnimMontage(ReloadMontage);
+		//GetWorld()->GetTimerManager().SetTimer(ReloadFinishedTimer, Weapon, &ALMABaseWeapon::ChangeClip, 1.0f, false);
+		Weapon->ChangeClip();
 	}
 }

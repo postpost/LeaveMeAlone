@@ -24,11 +24,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
+	
 	void SpawnWeapon();
-
 	void Fire();
 	void StopFire();
 
@@ -43,6 +40,7 @@ public:
 	UAnimMontage* ReloadMontage; // анимационный монтаж
 
 	bool AnimReloading = false;  //флаг, который будет выставляться при старте перезарядки
+	bool IsFiring = false;
 
 	void Reload(); //функция перезарядки
 	void CheckReload();
@@ -61,4 +59,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName SocketName = "r_Weapon_Socket";
 
+	FTimerHandle ReloadFinishedTimer;
 };

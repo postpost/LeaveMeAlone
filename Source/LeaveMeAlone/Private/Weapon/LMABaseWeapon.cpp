@@ -24,7 +24,7 @@ ALMABaseWeapon::ALMABaseWeapon()
 void ALMABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
+	CurrentAmmoWeapon = AmmoWeapon;
 }
 
 void ALMABaseWeapon::Fire() 
@@ -89,7 +89,6 @@ void ALMABaseWeapon::Shoot()
 	{
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 24, FColor::Red, false, 1.0f);
 	}
-
 	DecrementBullets();
 }
 
