@@ -11,6 +11,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/LMAWeaponComponent.h"
+#include <Player/LMAPlayerController.h>
+#include <Widgets/LMABaseHUD.h>
+#include "Blueprint/UserWidget.h"
 
 
 // Sets default values
@@ -130,6 +133,20 @@ void ALMADefaultCharacter::OnStopJump()
 void ALMADefaultCharacter::OnDeath() 
 {
 	CurrentCursor->DestroyRenderState_Concurrent();
+
+	auto PlayerController = Cast<ALMAPlayerController>(Controller);
+	if (PlayerController)
+	{
+		auto HUD = Cast<ALMABaseHUD>(PlayerController->GetHUD());
+		if (HUD)
+		{
+			for (auto Widget : HUD->WidgetsContainer)
+			{
+				//	#include "Blueprint/UserWidget.h"
+				Widget->RemoveFromParent();
+			}
+		}
+	}
 	
 	PlayAnimMontage(DeathMontage);
 	GetCharacterMovement()->DisableMovement();
@@ -157,11 +174,6 @@ void ALMADefaultCharacter::RotationPlayerOnCursor()
 			CurrentCursor->SetWorldLocation(ResultHit.Location);
 		}
 	}
-}
-
-void ALMADefaultCharacter::OnHealthChanged(float NewHealth) 
-{
-	//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Health = %f"), NewHealth));
 }
 
 void ALMADefaultCharacter::StartSprint()
@@ -199,7 +211,7 @@ void ALMADefaultCharacter::DecreaseStamina()
 		Stamina = FMath::Clamp(Stamina - StaminaDamage, 0.0f, MaxStamina);
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Magenta, FString::Printf(TEXT("Stamina = %f"), Stamina));
 	}
-	if (Stamina == 0 && IsSprinting == true)
+	if (Stamina == 0 && IsSprinting == true || FMath::IsNearlyZero(GetVelocity().Length()))
 	{
 		IsStaminaRestored = false;
 		StopSprint();

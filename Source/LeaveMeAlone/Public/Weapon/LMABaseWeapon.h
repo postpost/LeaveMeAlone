@@ -9,7 +9,7 @@
 class USkeletalMeshComponent;
 
 //delagate declaration
-DECLARE_MULTICAST_DELEGATE(FOnEmptyClipSignature);
+DECLARE_MULTICAST_DELEGATE(FOnEmptyClipSignature)
 
 USTRUCT(BlueprintType)
 struct FAmmoWeapon
@@ -47,8 +47,7 @@ protected:
 	void StopShooting();
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
 	void Fire();
 	void StopFire();
 
@@ -65,6 +64,9 @@ public:
 	bool IsCurrentClipFull() const;
 
 	FOnEmptyClipSignature OnEmptyClipSignature;
+		
+	void SetShootFrequency(float NewShootFrequency) { ShootFrequency = NewShootFrequency; }
+	
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
@@ -76,7 +78,11 @@ protected:
 	//следит за текущим боеприпасом
 	FAmmoWeapon CurrentAmmoWeapon;
 
+
 private:
+	// частота расхода пуль/сек
+	float ShootFrequency = 0.00f;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName WeaponSocketName = "Muzzle";
 

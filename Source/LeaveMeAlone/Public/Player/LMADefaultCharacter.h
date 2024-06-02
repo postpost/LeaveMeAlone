@@ -47,6 +47,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetStamina() { return Stamina; };
 
+		// func for Damage Delegate
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHealthChanged(float NewHealth);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USpringArmComponent* SpringArmComponent;
@@ -122,8 +126,5 @@ private:
 
 	//cursor interpret on Death time
 	void RotationPlayerOnCursor();
-
-	//func for Damage Delegate
-	void OnHealthChanged(float NewHealth);
 
 };

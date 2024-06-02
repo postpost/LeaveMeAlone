@@ -23,10 +23,9 @@ ULMAWeaponComponent::ULMAWeaponComponent()
 void ULMAWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	SpawnWeapon();
-
 	InitAnimNotify();
+	Weapon->SetShootFrequency(ShootFrequency);
 }
 
 void ULMAWeaponComponent::SpawnWeapon() 
@@ -110,7 +109,15 @@ bool ULMAWeaponComponent::GetCurrentWeaponRef(FAmmoWeapon& AmmoWeapon) const
 	return false;
 }
 
-void ULMAWeaponComponent::Reload() 
+void ULMAWeaponComponent::OnReloadMontageBlendingOut(UAnimMontage* AnimMontage, bool bInterrupted) 
+{
+	if (AnimMontage == ReloadMontage)
+	{
+		Weapon->ChangeClip();
+	}
+}
+
+void ULMAWeaponComponent::Reload()
 {
 	CheckReload();
 }
@@ -128,8 +135,11 @@ void ULMAWeaponComponent::CheckReload()
 		}
 		
 		ACharacter* Character = Cast<ACharacter>(GetOwner());
-		Character->PlayAnimMontage(ReloadMontage);
-		//GetWorld()->GetTimerManager().SetTimer(ReloadFinishedTimer, Weapon, &ALMABaseWeapon::ChangeClip, 1.0f, false);
-		Weapon->ChangeClip();
+		if (Character)
+		{
+			Character->PlayAnimMontage(ReloadMontage);
+			Character->GetMesh()->GetAnimInstance()->OnMontageBlendingOut.AddUniqueDynamic(
+				this, &ULMAWeaponComponent::OnReloadMontageBlendingOut);
+		}
 	}
 }

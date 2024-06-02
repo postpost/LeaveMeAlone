@@ -8,9 +8,10 @@ public class LeaveMeAlone : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "Niagara" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PublicIncludePaths.AddRange(new string[] {"LeaveMeAlone"}); //в кавычках имя_директории
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

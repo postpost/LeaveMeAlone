@@ -7,9 +7,10 @@
 #include "Weapon/LMABaseWeapon.h"
 #include "LMAWeaponComponent.generated.h"
 
+
+
 class ALMABaseWeapon;
  
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LEAVEMEALONE_API ULMAWeaponComponent : public UActorComponent
 {
@@ -39,6 +40,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	UAnimMontage* ReloadMontage; // анимационный монтаж
 
+	//FUNC for FOnMontageBlendingOutStartedMCDelegate
+	UFUNCTION()
+	void OnReloadMontageBlendingOut(UAnimMontage* AnimMontage, bool bInterrupted);
+
 	bool AnimReloading = false;  //флаг, который будет выставляться при старте перезарядки
 	bool IsFiring = false;
 
@@ -55,9 +60,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetCurrentWeaponRef(FAmmoWeapon& AmmoWeapon) const;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float ShootFrequency = 0.08f;
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName SocketName = "r_Weapon_Socket";
-
+	
 	FTimerHandle ReloadFinishedTimer;
+
 };

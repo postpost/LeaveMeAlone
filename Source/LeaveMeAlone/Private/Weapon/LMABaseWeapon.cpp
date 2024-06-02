@@ -29,8 +29,7 @@ void ALMABaseWeapon::BeginPlay()
 
 void ALMABaseWeapon::Fire() 
 {
-	GetWorldTimerManager().SetTimer(FireTimeHandler, this, &ALMABaseWeapon::Shoot, 0.02f, true);
-	//Shoot();
+	GetWorldTimerManager().SetTimer(FireTimeHandler, this, &ALMABaseWeapon::Shoot, ShootFrequency, true);
 }
 
 void ALMABaseWeapon::StopFire() 
@@ -51,9 +50,7 @@ void ALMABaseWeapon::DecrementBullets()
 	//UE_LOG(LogWeapon, Display, TEXT("Bullets = %s"), *FString::FromInt(CurrentAmmoWeapon.Bullets));
 	if (IsCurrentClipEmpty())
 	{
-		//StopShooting(); TO_DO?
 		OnEmptyClipSignature.Broadcast();
-		//ChangeClip();
 	}
 }
 
@@ -92,11 +89,4 @@ void ALMABaseWeapon::Shoot()
 	DecrementBullets();
 }
 
-
-// Called every frame
-void ALMABaseWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
