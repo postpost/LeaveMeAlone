@@ -63,10 +63,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float ShootFrequency = 0.08f;
 
+	//Delegate to stop firing when sprinting
+	void OnSprintingStarted(bool IsSprintingNow);
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Sockets")
 	FName SocketName = "r_Weapon_Socket";
 	
 	FTimerHandle ReloadFinishedTimer;
+
+	bool IsSprinting = false;
 
 };

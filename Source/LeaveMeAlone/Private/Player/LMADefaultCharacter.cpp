@@ -179,6 +179,10 @@ void ALMADefaultCharacter::RotationPlayerOnCursor()
 void ALMADefaultCharacter::StartSprint()
 {
 	IsSprinting = true;
+	if (WeaponComponent)
+	{
+		WeaponComponent->OnSprintingStarted(IsSprinting);
+	}
 	if (Stamina>0)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -186,12 +190,15 @@ void ALMADefaultCharacter::StartSprint()
 		// Timer to decrease Stamina
 		GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseTimerHandle, this, &ALMADefaultCharacter::DecreaseStamina, 0.5f, true);
 	}
-
 }
 
 void ALMADefaultCharacter::StopSprint() 
 {
 	IsSprinting = false;
+	if (WeaponComponent)
+	{
+		WeaponComponent->OnSprintingStarted(IsSprinting);
+	}
 	//Вернуть исходные значения
 	GetCharacterMovement()->MaxWalkSpeed = InitialSpeed;
 	GetCharacterMovement()->MaxAcceleration = InitialAcceleration;

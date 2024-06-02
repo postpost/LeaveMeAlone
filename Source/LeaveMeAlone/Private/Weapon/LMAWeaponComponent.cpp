@@ -25,7 +25,6 @@ void ULMAWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 	SpawnWeapon();
 	InitAnimNotify();
-	Weapon->SetShootFrequency(ShootFrequency);
 }
 
 void ULMAWeaponComponent::SpawnWeapon() 
@@ -33,6 +32,7 @@ void ULMAWeaponComponent::SpawnWeapon()
 	Weapon = GetWorld()->SpawnActor<ALMABaseWeapon>(WeaponClass);
 	if (Weapon)
 	{
+		Weapon->SetShootFrequency(ShootFrequency);
 		//Пополняем магазин
 		Weapon->ChangeClip();
 		// получаем владельца оружия, кастуем к ACharacter и сохраняем в переменную
@@ -51,7 +51,7 @@ void ULMAWeaponComponent::SpawnWeapon()
 
 void ULMAWeaponComponent::Fire() 
 {
-	if (Weapon && !AnimReloading)
+	if (Weapon && !AnimReloading && !IsSprinting)
 	{
 		Weapon->Fire(); //вызывает ф-цию в ALMABaseWeapon
 		IsFiring = true;
@@ -107,6 +107,11 @@ bool ULMAWeaponComponent::GetCurrentWeaponRef(FAmmoWeapon& AmmoWeapon) const
 		return true;
 	}
 	return false;
+}
+
+void ULMAWeaponComponent::OnSprintingStarted(bool IsSprintingNow) 
+{
+	IsSprinting = IsSprintingNow;
 }
 
 void ULMAWeaponComponent::OnReloadMontageBlendingOut(UAnimMontage* AnimMontage, bool bInterrupted) 
