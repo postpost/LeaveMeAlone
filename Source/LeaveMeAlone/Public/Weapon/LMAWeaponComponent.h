@@ -7,7 +7,7 @@
 #include "Weapon/LMABaseWeapon.h"
 #include "LMAWeaponComponent.generated.h"
 
-
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSomethingChanged, bool)
 
 class ALMABaseWeapon;
  
@@ -73,5 +73,8 @@ private:
 	FTimerHandle ReloadFinishedTimer;
 
 	bool IsSprinting = false;
+
+	//UFUNCTION(BlueprintCallable)
+	//FOnSomethingChanged OnSomethingChanged;
 
 };

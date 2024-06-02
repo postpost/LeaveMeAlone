@@ -10,8 +10,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class ULMAHealthComponent;
 class UAnimMontage;
-
 class ULMAWeaponComponent;
+class ULevel;
 
 UCLASS()
 class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
@@ -50,6 +50,10 @@ public:
 		// func for Damage Delegate
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged(float NewHealth);
+
+
+	UPROPERTY(BlueprintReadWrite)
+	TSoftObjectPtr<UWorld> OnDeadLevel;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -90,6 +94,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sprint Settings")
 	float StaminaDamage = 5.0f;
 
+
 private:
 	float YRotation = -75.0f; //поворот камеры по оси Y
 	float ArmLength = 1400.0f; // длина штатива
@@ -121,10 +126,16 @@ private:
 	FTimerHandle StaminaRestoreTimerHandle;
 	FTimerHandle StaminaDecreaseTimerHandle;
 
+	//Timer for UI after Player death
+	FTimerHandle OnDeadUITimerHandle;
+
+
 	//reaction on Death Delegate (in HealthComponent)
 	void OnDeath();
 
 	//cursor interpret on Death time
 	void RotationPlayerOnCursor();
 
+	// load UI after death
+	void LoadUIOnDead();
 };

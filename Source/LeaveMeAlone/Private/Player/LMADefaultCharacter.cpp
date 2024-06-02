@@ -14,6 +14,7 @@
 #include <Player/LMAPlayerController.h>
 #include <Widgets/LMABaseHUD.h>
 #include "Blueprint/UserWidget.h"
+#include "Engine/Level.h"
 
 
 // Sets default values
@@ -156,6 +157,9 @@ void ALMADefaultCharacter::OnDeath()
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
+
+	//Load UI
+	GetWorldTimerManager().SetTimer(OnDeadUITimerHandle, this, &ALMADefaultCharacter::LoadUIOnDead, 2.0f, false);
 }
 
 void ALMADefaultCharacter::RotationPlayerOnCursor() 
@@ -173,6 +177,14 @@ void ALMADefaultCharacter::RotationPlayerOnCursor()
 		{
 			CurrentCursor->SetWorldLocation(ResultHit.Location);
 		}
+	}
+}
+
+void ALMADefaultCharacter::LoadUIOnDead() 
+{
+	if (OnDeadLevel)
+	{
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), OnDeadLevel);
 	}
 }
 
