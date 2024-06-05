@@ -10,13 +10,6 @@ void ALMAPlayerController::BeginPlay()
 {
 	SetInputMode(FInputModeGameOnly());
 	bShowMouseCursor = false;
-
-	auto CurrentCharacter = Cast<ALMADefaultCharacter>(GetOwner());
-	if (CurrentCharacter)
-	{
-		ULMAHealthComponent* CurrentHealthComponent = CurrentCharacter->GetHealthComponent();
-		CurrentHealthComponent->OnDeath.AddUObject(this, &ALMAPlayerController::OnUnPossess);
-	}
 }
 
 void ALMAPlayerController::BeginSpectatingState() 
@@ -28,9 +21,9 @@ void ALMAPlayerController::BeginSpectatingState()
 void ALMAPlayerController::OnUnPossess() 
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Player is dead")));
-	if (OnDeadLevel !=nullptr)
+	if (!OnDeadLevel.IsNull())
 	{
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), OnDeadLevel);
-	
+		//UE_LOG(LogTemp, Warning, TEXT("OnDeadLevel: %s"), *OnDeadLevel.ToString()); 
+		UGameplayStatics::OpenLevelBySoftObjectPtr(this, OnDeadLevel);
 	}
 }
