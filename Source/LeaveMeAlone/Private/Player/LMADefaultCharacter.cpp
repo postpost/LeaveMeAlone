@@ -157,9 +157,8 @@ void ALMADefaultCharacter::OnDeath()
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
-
 	//Load UI
-	GetWorldTimerManager().SetTimer(OnDeadUITimerHandle, this, &ALMADefaultCharacter::LoadUIOnDead, 2.0f, false);
+	//GetWorldTimerManager().SetTimer(OnDeadUITimerHandle, this, &ALMADefaultCharacter::LoadUIOnDead, 1.0f, false);
 }
 
 void ALMADefaultCharacter::RotationPlayerOnCursor() 
@@ -180,13 +179,15 @@ void ALMADefaultCharacter::RotationPlayerOnCursor()
 	}
 }
 
-void ALMADefaultCharacter::LoadUIOnDead() 
-{
-	if (OnDeadLevel)
-	{
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), OnDeadLevel);
-	}
-}
+//void ALMADefaultCharacter::LoadUIOnDead() 
+//{
+//	if (OnDeadLevel)
+//	{
+//		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), OnDeadLevel);
+//	}
+//
+//	GetWorldTimerManager().ClearTimer(OnDeadUITimerHandle);
+//}
 
 void ALMADefaultCharacter::StartSprint()
 {

@@ -16,4 +16,13 @@ class LEAVEMEALONE_API ALMAPlayerController : public APlayerController
 protected:
 	virtual void BeginPlay() override;
 	virtual void BeginSpectatingState() override;
+	//virtual void OnUnPossess() override;
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TSoftObjectPtr<UWorld> OnDeadLevel;
+
+private:
+	UFUNCTION()
+	void OnUnPossess();
 };

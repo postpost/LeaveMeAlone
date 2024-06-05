@@ -47,13 +47,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetStamina() { return Stamina; };
 
-		// func for Damage Delegate
+	// func for Damage Delegate
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHealthChanged(float NewHealth);
-
-
-	UPROPERTY(BlueprintReadWrite)
-	TSoftObjectPtr<UWorld> OnDeadLevel;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -73,10 +69,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float ZoomMultiplier = 10.0f;
-	
-	//Health Component
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components|Health");
-	ULMAHealthComponent* HealthComponent;
 
 	//Anim Montage (for Death)
 	UPROPERTY(EditDefaultsOnly, Category = "Animation")
@@ -94,6 +86,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Sprint Settings")
 	float StaminaDamage = 5.0f;
 
+	// Health Component
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components|Health");
+	ULMAHealthComponent* HealthComponent;
 
 private:
 	float YRotation = -75.0f; //поворот камеры по оси Y
@@ -129,13 +124,9 @@ private:
 	//Timer for UI after Player death
 	FTimerHandle OnDeadUITimerHandle;
 
-
 	//reaction on Death Delegate (in HealthComponent)
 	void OnDeath();
 
 	//cursor interpret on Death time
 	void RotationPlayerOnCursor();
-
-	// load UI after death
-	void LoadUIOnDead();
 };
