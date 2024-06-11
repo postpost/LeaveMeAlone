@@ -7,6 +7,8 @@
 #include "LMABaseWeapon.generated.h"
 
 class USkeletalMeshComponent;
+class USoundWave;
+class UNiagaraSystem;
 
 //delagate declaration
 DECLARE_MULTICAST_DELEGATE(FOnEmptyClipSignature)
@@ -39,15 +41,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	float TraceDistance = 800.0f;
-
-	void Shoot();
-	void StopShooting();
-
 public:	
-
 	void Fire();
 	void StopFire();
 
@@ -67,7 +61,23 @@ public:
 		
 	void SetShootFrequency(float NewShootFrequency) { ShootFrequency = NewShootFrequency; }
 	
+	// Sound
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	USoundWave* ShootWave;
 
+	//Niagara System
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Niagara")
+	UNiagaraSystem* TraceEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Niagara")
+	FString TraceName = "Tracer";
+
+	//Damage to NPC
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float Damage = 20.0f;
+
+	void MakeDamage(const FHitResult& HitResult);
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMeshComponent* WeaponComponent;
@@ -75,9 +85,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FAmmoWeapon AmmoWeapon {30, 1, true};
 	
-	//следит за текущим боеприпасом
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	float TraceDistance = 800.0f;
+
+	// следит за текущим боеприпасом
 	FAmmoWeapon CurrentAmmoWeapon;
 
+	void Shoot();
+	void StopShooting();
+
+	//Niagara System
+	void SpawnTrace(const FVector& TraceStart, const FVector& TraceEnd);
 
 private:
 	// частота расхода пуль/сек

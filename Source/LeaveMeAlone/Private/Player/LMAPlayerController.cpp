@@ -18,12 +18,17 @@ void ALMAPlayerController::BeginSpectatingState()
 	Super::BeginSpectatingState();
 }
 
-void ALMAPlayerController::OnUnPossess() 
+void ALMAPlayerController::LoadDeathLevel()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Player is dead")));
 	if (!OnDeadLevel.IsNull())
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("OnDeadLevel: %s"), *OnDeadLevel.ToString()); 
 		UGameplayStatics::OpenLevelBySoftObjectPtr(this, OnDeadLevel);
 	}
+}
+
+void ALMAPlayerController::OnUnPossess()
+{
+	Super::OnUnPossess();
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(TEXT("Player is dead")));
+	GetWorldTimerManager().SetTimer(OnUnPossessTimerHandle, this, &ALMAPlayerController::LoadDeathLevel, DateTimeRate, false);
 }

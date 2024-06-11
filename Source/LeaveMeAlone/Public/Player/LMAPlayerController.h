@@ -18,10 +18,17 @@ protected:
 	virtual void BeginSpectatingState() override;
 
 public:
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Death")
 	TSoftObjectPtr<UWorld> OnDeadLevel;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Death")
+	float DateTimeRate = 2.0f;
+
 private:
+	FTimerHandle OnUnPossessTimerHandle;
+
+	void LoadDeathLevel();
+
 	UFUNCTION()
 	virtual void OnUnPossess() override;
 };

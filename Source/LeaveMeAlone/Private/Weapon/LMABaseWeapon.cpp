@@ -4,7 +4,9 @@
 #include "Weapon/LMABaseWeapon.h"
 #include "Engine/SkeletalMesh.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // собственная категория логирования
 // для отображения в лог кол-ва боеприпасов
@@ -43,6 +45,15 @@ void ALMABaseWeapon::StopShooting()
 	GetWorldTimerManager().ClearTimer(FireTimeHandler);
 }
 
+void ALMABaseWeapon::SpawnTrace(const FVector& TraceStart, const FVector& TraceEnd) 
+{
+	const auto TraceFX = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TraceEffect, TraceStart);
+	if (TraceFX)
+	{
+		TraceFX->SetNiagaraVariableVec3(TraceName, TraceEnd);
+	}
+}
+
 void ALMABaseWeapon::DecrementBullets() 
 {
 	if (!IsCurrentClipEmpty())
@@ -70,22 +81,43 @@ void ALMABaseWeapon::ChangeClip()
 	CurrentAmmoWeapon.Bullets = AmmoWeapon.Bullets;
 }
 
-void ALMABaseWeapon::Shoot() 
+void ALMABaseWeapon::MakeDamage(const FHitResult& HitResult) 
+{
+	const auto Zombie = HitResult.GetActor();
+	if (!Zombie)
+		return;
+	const auto Pawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if (!Pawn)
+		return;
+	const auto Controller = Pawn->GetController<APlayerController>();
+	if (!Controller)
+		return;
+	Zombie->TakeDamage(Damage, FDamageEvent(), Controller, this);
+}
+
+void ALMABaseWeapon::Shoot()
 {
 	const FTransform SocketTransform = WeaponComponent->GetSocketTransform(WeaponSocketName);
 	const FVector TraceStart = SocketTransform.GetLocation();
 	const FVector ShootDirection = SocketTransform.GetRotation().GetForwardVector();
 	const FVector TraceEnd = TraceStart + ShootDirection * TraceDistance;
 
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Cyan, false, 1.0f, 0, 2.0f);
+	//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Cyan, false, 1.0f, 0, 2.0f);
 
 	FHitResult HitResult;
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
+	//Niagara
+	FVector TracerEnd = TraceEnd;
 
 	if (HitResult.bBlockingHit)
 	{
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 24, FColor::Red, false, 1.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 24, FColor::Red, false, 1.0f);
+		MakeDamage(HitResult);
+		TracerEnd = HitResult.ImpactPoint;
 	}
+
+	SpawnTrace(TraceStart, TracerEnd);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShootWave, TraceStart);
 	DecrementBullets();
 }
 
